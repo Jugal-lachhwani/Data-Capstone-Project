@@ -1,0 +1,15 @@
+artifact_uri: file:///e:/DataScienceProjects/MLOPS%20Projects/Data-Capstone-Project/notebooks/mlruns/0/930c861634f84ba79ecab4f42c2f24d7/artifacts
+end_time: 1760859567700
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 930c861634f84ba79ecab4f42c2f24d7
+run_name: CountVectorizer_LogisticRegression
+run_uuid: 930c861634f84ba79ecab4f42c2f24d7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760859550027
+status: 3
+tags: []
+user_id: DELL

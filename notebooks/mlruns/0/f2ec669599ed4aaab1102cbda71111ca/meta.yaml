@@ -1,0 +1,15 @@
+artifact_uri: file:///e:/DataScienceProjects/MLOPS%20Projects/Data-Capstone-Project/notebooks/mlruns/0/f2ec669599ed4aaab1102cbda71111ca/artifacts
+end_time: 1760859580056
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: f2ec669599ed4aaab1102cbda71111ca
+run_name: TFIDFVectorizer_LogisticRegression
+run_uuid: f2ec669599ed4aaab1102cbda71111ca
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760859574509
+status: 3
+tags: []
+user_id: DELL

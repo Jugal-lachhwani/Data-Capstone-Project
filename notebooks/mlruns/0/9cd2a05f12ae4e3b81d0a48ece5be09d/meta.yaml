@@ -1,0 +1,15 @@
+artifact_uri: file:///e:/DataScienceProjects/MLOPS%20Projects/Data-Capstone-Project/notebooks/mlruns/0/9cd2a05f12ae4e3b81d0a48ece5be09d/artifacts
+end_time: 1760859574323
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 9cd2a05f12ae4e3b81d0a48ece5be09d
+run_name: CountVectorizer_RandomForest
+run_uuid: 9cd2a05f12ae4e3b81d0a48ece5be09d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760859567714
+status: 3
+tags: []
+user_id: DELL

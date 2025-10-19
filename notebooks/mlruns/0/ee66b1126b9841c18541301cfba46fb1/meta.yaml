@@ -1,0 +1,15 @@
+artifact_uri: file:///e:/DataScienceProjects/MLOPS%20Projects/Data-Capstone-Project/notebooks/mlruns/0/ee66b1126b9841c18541301cfba46fb1/artifacts
+end_time: 1760859586407
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: ee66b1126b9841c18541301cfba46fb1
+run_name: TFIDFVectorizer_RandomForest
+run_uuid: ee66b1126b9841c18541301cfba46fb1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760859580065
+status: 3
+tags: []
+user_id: DELL
