@@ -73,6 +73,11 @@ reports/
 # VS Code
 .vscode/
 
+data/
+data.dvc
+models/
+models.dvc
+
 # Spyder
 .spyproject/
 
