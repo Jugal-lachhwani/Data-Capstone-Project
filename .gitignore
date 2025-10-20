@@ -4,7 +4,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+credentials.txt
 # Distribution / packaging
 .Python
 env/
@@ -20,9 +20,11 @@ parts/
 sdist/
 var/
 *.egg-info/
+logs
 .installed.cfg
 *.egg
-
+done.txt
+next.txt
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
@@ -62,7 +64,9 @@ target/
 # Database
 *.db
 *.rdb
-
+trial.py
+models
+reports/
 # Pycharm
 .idea
 
