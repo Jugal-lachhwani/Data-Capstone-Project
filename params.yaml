@@ -1,0 +1,10 @@
+# params.yaml
+data_ingestion:
+  test_size: 0.2
+
+feature_engineering:
+  max_features: 100
+
+model_building:
+  max_depth: 10
+  n_estimators: 100

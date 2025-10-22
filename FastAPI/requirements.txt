@@ -1,0 +1,8 @@
+fastapi==0.111.1
+uvicorn==0.23.2
+pydantic==2.8.2
+pandas==2.1.1
+scikit-learn==1.6.1
+nltk==3.9.1
+mlflow==2.7.1
+python-dotenv==1.0.0

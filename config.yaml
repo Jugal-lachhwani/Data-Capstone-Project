@@ -1,0 +1,17 @@
+data_ingetion:
+  input_path: 'https://raw.githubusercontent.com/vikashishere/Datasets/refs/heads/main/data.csv'
+  output_path: './data\raw'
+
+data_preprocessing:
+  input_path: './data\raw'
+  output_path: './data\interim'
+
+feature_engineering:
+  input_path: './data\interim'
+  output_path: './data\processed'
+
+model-building:
+  input_path: './data\processed'
+  output_path: './models'
+
+

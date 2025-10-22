@@ -7,6 +7,23 @@ import yaml
 from src.logger import logging
 # from src.connections import s3_connection
 
+def load_config(config_path: str) -> dict:
+    """Load parameters from a YAML file."""
+    try:
+        with open(config_path, 'r') as file:
+            config = yaml.safe_load(file)
+        logging.debug('Parameters retrieved from %s', config_path)
+        return config
+    except FileNotFoundError:
+        logging.error('File not found: %s', config_path)
+        raise
+    except yaml.YAMLError as e:
+        logging.error('YAML error: %s', e)
+        raise
+    except Exception as e:
+        logging.error('Unexpected error: %s', e)
+        raise
+
 # For loading the params yaml file
 def load_params(params_path: str) -> dict:
     """Load parameters from a YAML file."""
@@ -42,29 +59,30 @@ def load_data(data_url: str) -> pd.DataFrame:
 def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str) -> None:
     """Save the train and test datasets."""
     try:
-        raw_data_path = os.path.join(data_path, 'raw')
-        os.makedirs(raw_data_path, exist_ok=True)
-        train_data.to_csv(os.path.join(raw_data_path, "train.csv"), index=False)
-        test_data.to_csv(os.path.join(raw_data_path, "test.csv"), index=False)
-        logging.debug('Train and test data saved to %s', raw_data_path)
+        os.makedirs(data_path, exist_ok=True)
+        train_data.to_csv(os.path.join(data_path, "train.csv"), index=False)
+        test_data.to_csv(os.path.join(data_path, "test.csv"), index=False)
+        logging.debug('Train and test data saved to %s', data_path)
     except Exception as e:
         logging.error('Unexpected error occurred while saving the data: %s', e)
         raise
     
 def main():
     try:
-        # params = load_params(params_path='params.yaml')
-        # test_size = params['data_ingestion']['test_size']
-        test_size = 0.2
-        
-        df = load_data(data_url='https://raw.githubusercontent.com/vikashishere/Datasets/refs/heads/main/data.csv')
+        params = load_params(params_path='params.yaml')
+        test_size = params['data_ingestion']['test_size']
+        config = load_config('config.yaml')
+        input_data = config['data_ingetion']['input_path']
+        df = load_data(data_url=input_data)
         # s3 = s3_connection.s3_operations("bucket-name", "accesskey", "secretkey")
         # df = s3.fetch_file_from_s3("data.csv")
         train_data, test_data = train_test_split(df, test_size=test_size, random_state=42)
-        save_data(train_data, test_data, data_path='./data')
+        save_data(train_data, test_data, data_path=config['data_ingetion']['output_path'])
+        logging.info('Data is Savd successfully')
     except Exception as e:
         logging.error('Failed to complete the data ingestion process: %s', e)
         print(f"Error: {e}")
 
 if __name__ == '__main__':
     main()
+    

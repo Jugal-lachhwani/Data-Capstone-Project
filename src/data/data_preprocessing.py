@@ -7,8 +7,26 @@ import string
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from src.logger import logging
+import yaml
 nltk.download('wordnet')
 nltk.download('stopwords')
+
+def load_config(config_path: str) -> dict:
+    """Load parameters from a YAML file."""
+    try:
+        with open(config_path, 'r') as file:
+            config = yaml.safe_load(file)
+        logging.debug('Parameters retrieved from %s', config_path)
+        return config
+    except FileNotFoundError:
+        logging.error('File not found: %s', config_path)
+        raise
+    except yaml.YAMLError as e:
+        logging.error('YAML error: %s', e)
+        raise
+    except Exception as e:
+        logging.error('Unexpected error: %s', e)
+        raise
 
 def preprocess_dataframe(df, col='text',target='sentiment'):
     """
@@ -58,18 +76,19 @@ def preprocess_dataframe(df, col='text',target='sentiment'):
 
 def main():
     try:
+        config = load_config('config.yaml')
         # Fetch the data from data/raw
-        train_data = pd.read_csv('./data/raw/train.csv')
-        test_data = pd.read_csv('./data/raw/test.csv')
+        input_path = config['data_preprocessing']['input_path']
+        train_data = pd.read_csv(os.path.join(input_path,'train.csv'))
+        test_data = pd.read_csv(os.path.join(input_path,'test.csv'))
         logging.info('data loaded properly')
 
         # Transform the data
-        train_processed_data = preprocess_dataframe(train_data, 'review','sentiment')
-        test_processed_data = preprocess_dataframe(test_data, 'review','sentiment')
+        train_processed_data = preprocess_dataframe(train_data,col= 'review',target='sentiment')
+        test_processed_data = preprocess_dataframe(test_data,col = 'review',target='sentiment')
 
         # Store the data inside data/processed
-        data_path = os.path.join("./data", "interim")
-        os.makedirs(data_path, exist_ok=True)
+        data_path = config['data_preprocessing']['output_path']
         
         train_processed_data.to_csv(os.path.join(data_path, "train_processed.csv"), index=False)
         test_processed_data.to_csv(os.path.join(data_path, "test_processed.csv"), index=False)

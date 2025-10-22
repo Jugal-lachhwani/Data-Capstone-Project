@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import yaml
 from src.logger import logging
 import pickle
-
+import yaml
 
 def load_params(params_path: str) -> dict:
     """Load parameters from a YAML file."""
@@ -16,6 +16,23 @@ def load_params(params_path: str) -> dict:
         return params
     except FileNotFoundError:
         logging.error('File not found: %s', params_path)
+        raise
+    except yaml.YAMLError as e:
+        logging.error('YAML error: %s', e)
+        raise
+    except Exception as e:
+        logging.error('Unexpected error: %s', e)
+        raise
+
+def load_config(config_path: str) -> dict:
+    """Load parameters from a YAML file."""
+    try:
+        with open(config_path, 'r') as file:
+            config = yaml.safe_load(file)
+        logging.debug('Parameters retrieved from %s', config_path)
+        return config
+    except FileNotFoundError:
+        logging.error('File not found: %s', config_path)
         raise
     except yaml.YAMLError as e:
         logging.error('YAML error: %s', e)
@@ -78,17 +95,21 @@ def save_data(df: pd.DataFrame, file_path: str) -> None:
 
 def main():
     try:
-        # params = load_params('params.yaml')
-        # max_features = params['feature_engineering']['max_features']
-        max_features = 100
+        params = load_params('params.yaml')
+        max_features = params['feature_engineering']['max_features']
 
-        train_data = load_data('./data/interim/train_processed.csv')
-        test_data = load_data('./data/interim/test_processed.csv')
+        config = load_config('config.yaml')
+        
+        input_path = config['feature_engineering']['input_path']
+        output_path = config['feature_engineering']['output_path']
+        
+        train_data = load_data(os.path.join(input_path,'train_processed.csv'))
+        test_data = load_data(os.path.join(input_path,'test_processed.csv'))
 
         train_df, test_df = apply_vectorizer(train_data, test_data, max_features)
 
-        save_data(train_df, os.path.join("./data", "processed", "train_bow.csv"))
-        save_data(test_df, os.path.join("./data", "processed", "test_bow.csv"))
+        save_data(train_df, os.path.join(output_path, "train_bow.csv"))
+        save_data(test_df, os.path.join(output_path, "test_bow.csv"))
     except Exception as e:
         logging.error('Failed to complete the feature engineering process: %s', e)
         print(f"Error: {e}")

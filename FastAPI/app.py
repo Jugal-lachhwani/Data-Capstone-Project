@@ -8,23 +8,36 @@ import re
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-from src.logger import logging
 import string
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
-import dagshub
+import os
 
 nltk.download('wordnet')
 nltk.download('stopwords')
 
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words("english"))
-mlflow.set_tracking_uri("https://dagshub.com/Jugal-lachhwani/Data-Capstone-Project.mlflow")
+import os
+import mlflow
+import pickle
 
-with open("models/vectorizer.pkl", "rb") as f:
+from dotenv import load_dotenv
+load_dotenv()
+
+# Set MLflow tracking URI and credentials from environment variables
+mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+
+# Set authentication using environment variables
+os.environ['MLFLOW_TRACKING_USERNAME'] = os.getenv("MLFLOW_TRACKING_USERNAME", "")
+os.environ['MLFLOW_TRACKING_PASSWORD'] = os.getenv("MLFLOW_TRACKING_PASSWORD", "")
+
+# Load vectorizer
+VECTOR_PATH = os.path.join(os.path.dirname(__file__), "models", "vectorizer.pkl")
+with open(VECTOR_PATH, "rb") as f:
     vectorizer = pickle.load(f)
-dagshub.init(repo_owner='Jugal-lachhwani', repo_name='Data-Capstone-Project', mlflow=True)
-# Load model once when the app starts
+
+# Load model from MLflow registry
 model_name = "my_model"
 model_stage = "Staging"
 model = mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/{model_stage}")
