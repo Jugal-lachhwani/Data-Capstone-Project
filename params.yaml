@@ -3,8 +3,10 @@ data_ingestion:
   test_size: 0.2
 
 feature_engineering:
-  max_features: 100
+  max_features: 1000
+  ngram_range: (1,2)
 
 model_building:
-  max_depth: 10
-  n_estimators: 100
+  alpha: 0.01
+  fit_prior: False
+

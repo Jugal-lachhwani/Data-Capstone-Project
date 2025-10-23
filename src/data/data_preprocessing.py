@@ -88,12 +88,14 @@ def main():
         test_processed_data = preprocess_dataframe(test_data,col = 'review',target='sentiment')
 
         # Store the data inside data/processed
-        data_path = config['data_preprocessing']['output_path']
+        output_path = config['data_preprocessing']['output_path']
         
-        train_processed_data.to_csv(os.path.join(data_path, "train_processed.csv"), index=False)
-        test_processed_data.to_csv(os.path.join(data_path, "test_processed.csv"), index=False)
+        os.makedirs(output_path)
         
-        logging.info('Processed data saved to %s', data_path)
+        train_processed_data.to_csv(os.path.join(output_path, "train_processed.csv"), index=False)
+        test_processed_data.to_csv(os.path.join(output_path, "test_processed.csv"), index=False)
+        
+        logging.info('Processed data saved to %s', output_path)
     except Exception as e:
         logging.error('Failed to complete the data transformation process: %s', e)
         print(f"Error: {e}")

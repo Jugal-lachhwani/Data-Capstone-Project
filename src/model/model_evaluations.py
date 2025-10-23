@@ -13,24 +13,19 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Below code block is for production use
+# Below code block is for production/CI use
 # -------------------------------------------------------------------------------------
-# Set up DagsHub credentials for MLflow tracking
-# dagshub_token = os.getenv("CAPSTONE_TEST")
-# if not dagshub_token:
-#     raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
+# Use environment variables for MLflow authentication (works in CI)
+mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "https://dagshub.com/Jugal-lachhwani/Data-Capstone-Project.mlflow")
+mlflow.set_tracking_uri(mlflow_tracking_uri)
 
-dagshub_token = os.environ['DAGSHUB_TOKEN']
-dagshub_name = os.environ["DAGSHUB_NAME"]
-
-# Set up MLflow tracking URI
-# mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
-# -------------------------------------------------------------------------------------
-
-# Below code block is for local use
-# -------------------------------------------------------------------------------------
-mlflow.set_tracking_uri("https://dagshub.com/Jugal-lachhwani/Data-Capstone-Project.mlflow")
-dagshub.init(repo_owner='Jugal-lachhwani', repo_name='Data-Capstone-Project', mlflow=True)
+# Set credentials if available (for CI)
+if os.getenv("MLFLOW_TRACKING_USERNAME") and os.getenv("MLFLOW_TRACKING_PASSWORD"):
+    os.environ['MLFLOW_TRACKING_USERNAME'] = os.getenv("MLFLOW_TRACKING_USERNAME")
+    os.environ['MLFLOW_TRACKING_PASSWORD'] = os.getenv("MLFLOW_TRACKING_PASSWORD")
+else:
+    # For local use with DagHub OAuth
+    dagshub.init(repo_owner='Jugal-lachhwani', repo_name='Data-Capstone-Project', mlflow=True)
 # -------------------------------------------------------------------------------------
 
 
@@ -109,6 +104,9 @@ def main():
     mlflow.set_experiment("my-dvc-pipeline")
     with mlflow.start_run() as run:  # Start an MLflow run
         try:
+            # Ensure reports directory exists
+            os.makedirs('./reports', exist_ok=True)
+            
             clf = load_model('./models/model.pkl')
             test_data = load_data('./data/processed/test_bow.csv')
             
@@ -129,8 +127,11 @@ def main():
                 for param_name, param_value in params.items():
                     mlflow.log_param(param_name, param_value)
             
-            # Log model to MLflow
+                        # Log model to MLflow
             mlflow.sklearn.log_model(clf, "model")
+            # Note: Skipping mlflow.sklearn.log_model() due to DagHub compatibility
+            # The model is already saved locally and tracked by DVC
+            logging.info("Model artifact saved locally via DVC, skipping MLflow model logging")
             
             # Save model info
             save_model_info(run.info.run_id, "model", 'reports/experiment_info.json')
@@ -141,6 +142,7 @@ def main():
         except Exception as e:
             logging.error('Failed to complete the model evaluation process: %s', e)
             print(f"Error: {e}")
+            raise  # Re-raise to ensure DVC knows the stage failed
 
 if __name__ == '__main__':
     main()

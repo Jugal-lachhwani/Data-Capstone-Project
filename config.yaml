@@ -1,5 +1,5 @@
 data_ingetion:
-  input_path: 'https://raw.githubusercontent.com/vikashishere/Datasets/refs/heads/main/data.csv'
+  input_path: 'https://raw.githubusercontent.com/vikashishere/YT-Capstone-Project/refs/heads/main/notebooks/IMDB.csv'
   output_path: './data\raw'
 
 data_preprocessing:

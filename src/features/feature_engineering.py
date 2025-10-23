@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 import yaml
 from src.logger import logging
 import pickle
@@ -55,11 +55,12 @@ def load_data(file_path: str) -> pd.DataFrame:
         logging.error('Unexpected error occurred while loading the data: %s', e)
         raise
 
-def apply_vectorizer(train_data: pd.DataFrame, test_data: pd.DataFrame, max_features: int) -> tuple:
+def apply_vectorizer(train_data: pd.DataFrame, test_data: pd.DataFrame) -> tuple:
     """Apply Count Vectorizer to the data."""
     try:
         logging.info("Applying BOW...")
-        vectorizer = TfidfVectorizer(max_features=max_features)
+        params = load_params('params.yaml')
+        vectorizer = CountVectorizer(max_features=params['feature_engineering']['max_features'],ngram_range=(1,2))
 
         X_train = train_data['review'].values
         y_train = train_data['sentiment'].values
@@ -95,9 +96,6 @@ def save_data(df: pd.DataFrame, file_path: str) -> None:
 
 def main():
     try:
-        params = load_params('params.yaml')
-        max_features = params['feature_engineering']['max_features']
-
         config = load_config('config.yaml')
         
         input_path = config['feature_engineering']['input_path']
@@ -106,8 +104,10 @@ def main():
         train_data = load_data(os.path.join(input_path,'train_processed.csv'))
         test_data = load_data(os.path.join(input_path,'test_processed.csv'))
 
-        train_df, test_df = apply_vectorizer(train_data, test_data, max_features)
+        train_df, test_df = apply_vectorizer(train_data, test_data)
 
+        os.makedirs(output_path)
+        
         save_data(train_df, os.path.join(output_path, "train_bow.csv"))
         save_data(test_df, os.path.join(output_path, "test_bow.csv"))
     except Exception as e:
