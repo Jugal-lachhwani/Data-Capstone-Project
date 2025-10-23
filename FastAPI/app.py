@@ -60,7 +60,7 @@ def preprocess_text(text):
         text = " ".join([lemmatizer.lemmatize(word) for word in text.split()])
         return text
 
-def apply_Tfidf(df):
+def apply_Vec(df):
 
     X_test = df['review'].values
     
@@ -74,12 +74,16 @@ app = FastAPI()
 
 class InputData(BaseModel):
     text: str
+    
+@app.get("/")
+def predict():
+    return {"Hello": "World"}
 
 @app.post("/predict")
 def predict(data: InputData):
     review = data.text
     text = preprocess_text(review)
-    df = apply_Tfidf(pd.DataFrame({'review':[text]}))
+    df = apply_Vec(pd.DataFrame({'review':[text]}))
     prediction = model.predict(df)
     if prediction == 0:
         return 'Negative'
