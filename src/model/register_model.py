@@ -5,7 +5,8 @@ import mlflow
 import logging
 from src.logger import logging
 import os
-import dagshub
+# import dagshub
+from dotenv import load_dotenv
 
 import warnings
 warnings.simplefilter("ignore", UserWarning)
@@ -35,6 +36,8 @@ warnings.filterwarnings("ignore")
 # mlflow.set_tracking_uri("https://dagshub.com/Jugal-lachhwani/Data-Capstone-Project.mlflow")
 # dagshub.init(repo_owner='Jugal-lachhwani', repo_name='Data-Capstone-Project', mlflow=True)# -------------------------------------------------------------------------------------
 
+load_dotenv()
+
 mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "https://dagshub.com/Jugal-lachhwani/Data-Capstone-Project.mlflow")
 mlflow.set_tracking_uri(mlflow_tracking_uri)
 
@@ -43,8 +46,9 @@ if os.getenv("MLFLOW_TRACKING_USERNAME") and os.getenv("MLFLOW_TRACKING_PASSWORD
     os.environ['MLFLOW_TRACKING_USERNAME'] = os.getenv("MLFLOW_TRACKING_USERNAME")
     os.environ['MLFLOW_TRACKING_PASSWORD'] = os.getenv("MLFLOW_TRACKING_PASSWORD")
 else:
+    print("Authorization Required")
     # For local use with DagHub OAuth
-    dagshub.init(repo_owner='Jugal-lachhwani', repo_name='Data-Capstone-Project', mlflow=True)
+    # dagshub.init(repo_owner='Jugal-lachhwani', repo_name='Data-Capstone-Project', mlflow=True)
 
 def load_model_info(file_path: str) -> dict:
     """Load the model info from a JSON file."""
