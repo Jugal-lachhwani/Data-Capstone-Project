@@ -3,15 +3,15 @@ data_ingestion:
   output_path: 'data/raw'
 
 data_preprocessing:
-  input_path: './data\raw'
-  output_path: './data\interim'
+  input_path: 'data/raw'
+  output_path: 'data/interim'
 
 feature_engineering:
-  input_path: './data\interim'
-  output_path: './data\processed'
+  input_path: 'data/interim'
+  output_path: 'data/processed'
 
 model-building:
-  input_path: './data\processed'
-  output_path: './models'
+  input_path: 'dataprocessed'
+  output_path: 'models'
 
 
