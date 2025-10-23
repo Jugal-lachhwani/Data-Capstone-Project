@@ -11,7 +11,7 @@ feature_engineering:
   output_path: 'data/processed'
 
 model-building:
-  input_path: 'dataprocessed'
+  input_path: 'data/processed'
   output_path: 'models'
 
 
