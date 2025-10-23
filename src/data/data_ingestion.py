@@ -72,12 +72,12 @@ def main():
         params = load_params(params_path='params.yaml')
         test_size = params['data_ingestion']['test_size']
         config = load_config('config.yaml')
-        input_data = config['data_ingetion']['input_path']
+        input_data = config['data_ingestion']['input_path']
         df = load_data(data_url=input_data)
         # s3 = s3_connection.s3_operations("bucket-name", "accesskey", "secretkey")
         # df = s3.fetch_file_from_s3("data.csv")
         train_data, test_data = train_test_split(df, test_size=test_size, random_state=42)
-        save_data(train_data, test_data, data_path=config['data_ingetion']['output_path'])
+        save_data(train_data, test_data, data_path=config['data_ingestion']['output_path'])
         logging.info('Data is Savd successfully')
     except Exception as e:
         logging.error('Failed to complete the data ingestion process: %s', e)

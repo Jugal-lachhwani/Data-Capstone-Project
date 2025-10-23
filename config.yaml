@@ -1,6 +1,6 @@
-data_ingetion:
+data_ingestion:
   input_path: 'https://raw.githubusercontent.com/vikashishere/YT-Capstone-Project/refs/heads/main/notebooks/IMDB.csv'
-  output_path: './data\raw'
+  output_path: 'data/raw'
 
 data_preprocessing:
   input_path: './data\raw'
