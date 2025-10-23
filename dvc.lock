@@ -71,24 +71,24 @@ stages:
       size: 174
     - path: src/features/feature_engineering.py
       hash: md5
-      md5: 7906cf16fb34537bd51385e44df05071
-      size: 4172
+      md5: 36bee5c1028d4c4f98ce9915ca352b29
+      size: 4203
     outs:
     - path: data/processed
       hash: md5
-      md5: fbff21913eaf516676473e4432f5f7bb.dir
+      md5: 14aa016e8af13b286bf82aa585aabaaf.dir
       size: 2011048
       nfiles: 2
     - path: models/vectorizer.pkl
       hash: md5
-      md5: 8ee72f08427b0e9375145e3cbe18fb27
-      size: 28422
+      md5: 5200046bfa607b8354a2c6995f7d999c
+      size: 1451082
   model_building:
     cmd: python src/model/model_building.py
     deps:
     - path: data/processed
       hash: md5
-      md5: fbff21913eaf516676473e4432f5f7bb.dir
+      md5: 14aa016e8af13b286bf82aa585aabaaf.dir
       size: 2011048
       nfiles: 2
     - path: params.yaml
@@ -102,15 +102,15 @@ stages:
     outs:
     - path: models/model.pkl
       hash: md5
-      md5: feb5be714ff3836bb122042acdc0af03
-      size: 32599
+      md5: 60431a868595a83fb2de6ee401583ab4
+      size: 32604
   model_evaluations:
     cmd: python src/model/model_evaluations.py
     deps:
     - path: models/model.pkl
       hash: md5
-      md5: feb5be714ff3836bb122042acdc0af03
-      size: 32599
+      md5: 60431a868595a83fb2de6ee401583ab4
+      size: 32604
     - path: params.yaml
       hash: md5
       md5: 197004de38203dd9127e908575f566d0
@@ -122,22 +122,22 @@ stages:
     outs:
     - path: reports/experiment_info.json
       hash: md5
-      md5: bee02730b6bc7373f23ff0ef019bc7fa
+      md5: f2cb157e818a454e7dc3ab1cd2c76aa1
       size: 82
     - path: reports/metrics.json
       hash: md5
-      md5: a60934a2fd1b79f854cec320db17a16d
+      md5: d4a1782c3410fa2ee71d28884c696fe3
       size: 131
   register_model:
     cmd: python src/model/register_model.py
     deps:
     - path: reports/experiment_info.json
       hash: md5
-      md5: bee02730b6bc7373f23ff0ef019bc7fa
+      md5: f2cb157e818a454e7dc3ab1cd2c76aa1
       size: 82
     - path: reports/metrics.json
       hash: md5
-      md5: a60934a2fd1b79f854cec320db17a16d
+      md5: d4a1782c3410fa2ee71d28884c696fe3
       size: 131
     - path: src/model/register_model.py
       hash: md5

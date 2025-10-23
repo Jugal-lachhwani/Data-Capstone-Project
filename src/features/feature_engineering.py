@@ -76,6 +76,8 @@ def apply_vectorizer(train_data: pd.DataFrame, test_data: pd.DataFrame) -> tuple
         test_df = pd.DataFrame(X_test_bow.toarray())
         test_df['label'] = y_test
 
+        os.makedirs('models')
+        
         pickle.dump(vectorizer, open('models/vectorizer.pkl', 'wb'))
         logging.info('Tfidf applied and data transformed')
 
@@ -107,7 +109,6 @@ def main():
         train_df, test_df = apply_vectorizer(train_data, test_data)
 
         os.makedirs(output_path)
-        
         save_data(train_df, os.path.join(output_path, "train_bow.csv"))
         save_data(test_df, os.path.join(output_path, "test_bow.csv"))
     except Exception as e:
