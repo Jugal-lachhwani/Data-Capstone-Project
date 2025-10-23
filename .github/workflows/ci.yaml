@@ -73,8 +73,16 @@ jobs:
 
       # 🧰 Step 4: Run Docker Container
       - name: Run Docker Container
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
         run: |
-          docker run -d -p 8000:8000 --name mlops-app mlops-fastapi:latest
+          docker run -d -p 8000:8000 \
+            -e MLFLOW_TRACKING_URI="${MLFLOW_TRACKING_URI}" \
+            -e MLFLOW_TRACKING_USERNAME="${MLFLOW_TRACKING_USERNAME}" \
+            -e MLFLOW_TRACKING_PASSWORD="${MLFLOW_TRACKING_PASSWORD}" \
+            --name mlops-app mlops-fastapi:latest
           echo "Docker container started successfully"
 
       # 🧰 Step 5: Wait for container to be ready
