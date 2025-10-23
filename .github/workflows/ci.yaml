@@ -41,6 +41,14 @@ jobs:
         run: |
           dvc repro
 
+      # 🧰 Step 6: Upload model artifacts
+      - name: Upload model artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: models
+          path: models/*.pkl
+          retention-days: 1
+
   docker-build-and-run:
     name: Build and Run Docker Container
     runs-on: ubuntu-latest
@@ -51,36 +59,43 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 🧰 Step 2: Build Docker Image
+      # 🧰 Step 2: Download model artifacts from previous job
+      - name: Download model artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: models
+          path: models/
+
+      # 🧰 Step 3: Build Docker Image
       - name: Build Docker Image
         run: |
-          docker build -t mlops-fastapi:latest -f ./FastAPI/Dockerfile ./FastAPI
+          docker build -t mlops-fastapi:latest -f ./FastAPI/Dockerfile .
 
-      # 🧰 Step 3: Run Docker Container
+      # 🧰 Step 4: Run Docker Container
       - name: Run Docker Container
         run: |
           docker run -d -p 8000:8000 --name mlops-app mlops-fastapi:latest
           echo "Docker container started successfully"
 
-      # 🧰 Step 4: Wait for container to be ready
+      # 🧰 Step 5: Wait for container to be ready
       - name: Wait for FastAPI to start
         run: |
           echo "Waiting for FastAPI to be ready..."
           sleep 10
 
-      # 🧰 Step 5: Test the running container
+      # 🧰 Step 6: Test the running container
       - name: Test FastAPI endpoint
         run: |
           curl -f http://localhost:8000/ || exit 1
           echo "FastAPI is running successfully!"
 
-      # 🧰 Step 6: Show container logs
+      # 🧰 Step 7: Show container logs
       - name: Show container logs
         if: always()
         run: |
           docker logs mlops-app
 
-      # 🧰 Step 7: Stop and remove container
+      # 🧰 Step 8: Stop and remove container
       - name: Cleanup
         if: always()
         run: |
