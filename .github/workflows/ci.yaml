@@ -48,84 +48,94 @@ jobs:
           name: models
           path: models/*.pkl
           retention-days: 1
-
-  docker-build-and-run:
-    name: Build and Run Docker Container
-    runs-on: ubuntu-latest
-    needs: build-train-register  # Wait until model training is done
-
-    steps:
-      # 🧰 Step 1: Checkout repo
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # 🧰 Step 2: Download model artifacts from previous job
-      - name: Download model artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: models
-          path: models/
-
-      # 🧰 Step 3: Build Docker Image
-      - name: Build Docker Image
-        run: |
-          docker build -t mlops-fastapi:latest -f ./FastAPI/Dockerfile .
-
-      # 🧰 Step 4: Run Docker Container
-      - name: Run Docker Container
+      
+      - name: Run Flask app tests
+        if: success()
         env:
           MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
           MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
-        run: |
-          docker run -d -p 8000:8000 \
-            -e MLFLOW_TRACKING_URI="${MLFLOW_TRACKING_URI}" \
-            -e MLFLOW_TRACKING_USERNAME="${MLFLOW_TRACKING_USERNAME}" \
-            -e MLFLOW_TRACKING_PASSWORD="${MLFLOW_TRACKING_PASSWORD}" \
-            --name mlops-app mlops-fastapi:latest
-          echo "Docker container started successfully"
+        run: python -m unittest tests/test_flask_app.py
+      
 
-      # 🧰 Step 5: Wait for container to be ready
-      - name: Wait for FastAPI to start
-        run: |
-          echo "Waiting for FastAPI to be ready..."
-          sleep 10
+  # docker-build-and-run:
+  #   name: Build and Run Docker Container
+  #   runs-on: ubuntu-latest
+  #   needs: build-train-register  # Wait until model training is done
 
-      # 🧰 Step 6: Test the running container
-      - name: Test FastAPI endpoint
-        run: |
-          curl -f http://localhost:8000/ || exit 1
-          echo "FastAPI is running successfully!"
+  #   steps:
+  #     # 🧰 Step 1: Checkout repo
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
 
-      # 🧰 Step 7: Show container logs
-      - name: Show container logs
-        if: always()
-        run: |
-          docker logs mlops-app
+  #     # 🧰 Step 2: Download model artifacts from previous job
+  #     - name: Download model artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: models
+  #         path: models/
 
-      # 🧰 Step 8: Stop and remove container
-      - name: Cleanup
-        if: always()
-        run: |
-          docker stop mlops-app || true
-          docker rm mlops-app || true
+      # # 🧰 Step 3: Build Docker Image
+      # - name: Build Docker Image
+      #   run: |
+      #     docker build -t mlops-fastapi:latest -f ./FastAPI/Dockerfile .
 
-        # 🧰 Step 9: Login to DockerHub
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # # 🧰 Step 4: Run Docker Container
+      # - name: Run Docker Container
+      #   env:
+      #     MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+      #     MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+      #     MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+      #   run: |
+      #     docker run -d -p 8000:8000 \
+      #       -e MLFLOW_TRACKING_URI="${MLFLOW_TRACKING_URI}" \
+      #       -e MLFLOW_TRACKING_USERNAME="${MLFLOW_TRACKING_USERNAME}" \
+      #       -e MLFLOW_TRACKING_PASSWORD="${MLFLOW_TRACKING_PASSWORD}" \
+      #       --name mlops-app mlops-fastapi:latest
+      #     echo "Docker container started successfully"
 
-        # 🧰 Step 10: Tag Docker Image for DockerHub
-      - name: Tag Docker Image
-        run: |
-          docker tag mlops-fastapi:latest ${{ secrets.DOCKERHUB_USERNAME }}/mlops-fastapi:latest
-          docker tag mlops-fastapi:latest ${{ secrets.DOCKERHUB_USERNAME }}/mlops-fastapi:${{ github.sha }}
+      # # 🧰 Step 5: Wait for container to be ready
+      # - name: Wait for FastAPI to start
+      #   run: |
+      #     echo "Waiting for FastAPI to be ready..."
+      #     sleep 10
 
-        # 🧰 Step 11: Push Docker Image to DockerHub
-      - name: Push Docker Image to DockerHub
-        run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mlops-fastapi:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mlops-fastapi:${{ github.sha }}
-          echo "Docker image pushed successfully!"
+      # # 🧰 Step 6: Test the running container
+      # - name: Test FastAPI endpoint
+      #   run: |
+      #     curl -f http://localhost:8000/ || exit 1
+      #     echo "FastAPI is running successfully!"
+
+      # # 🧰 Step 7: Show container logs
+      # - name: Show container logs
+      #   if: always()
+      #   run: |
+      #     docker logs mlops-app
+
+      # # 🧰 Step 8: Stop and remove container
+      # - name: Cleanup
+      #   if: always()
+      #   run: |
+      #     docker stop mlops-app || true
+      #     docker rm mlops-app || true
+
+      #   # 🧰 Step 9: Login to DockerHub
+      # - name: Login to DockerHub
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      #   # 🧰 Step 10: Tag Docker Image for DockerHub
+      # - name: Tag Docker Image
+      #   run: |
+      #     docker tag mlops-fastapi:latest ${{ secrets.DOCKERHUB_USERNAME }}/mlops-fastapi:latest
+      #     docker tag mlops-fastapi:latest ${{ secrets.DOCKERHUB_USERNAME }}/mlops-fastapi:${{ github.sha }}
+
+      #   # 🧰 Step 11: Push Docker Image to DockerHub
+      # - name: Push Docker Image to DockerHub
+      #   run: |
+      #     docker push ${{ secrets.DOCKERHUB_USERNAME }}/mlops-fastapi:latest
+      #     docker push ${{ secrets.DOCKERHUB_USERNAME }}/mlops-fastapi:${{ github.sha }}
+      #     echo "Docker image pushed successfully!"
+

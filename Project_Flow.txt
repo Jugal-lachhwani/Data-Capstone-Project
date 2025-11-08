@@ -1,0 +1,30 @@
+First select the Problem statement, Dataset
+Create a notebook and perform multiple experimentations with the Mlflow find the best model
+Afetr getting teh best model implement that model in the Parts in file like
+- data_ingetion.py
+- data_preprocessing.py
+- feature_engineering.py
+- modle_building.py
+- model_evaluation.py
+- register_model.py
+add dvc.yaml
+the model is registered in the mlflow in stagging
+do dvc repro
+
+Add tests
+do promote modlel if the test ate passed 
+
+make a fast api
+the fast api fetch the model from the moflow artifect load it and use it for predicting
+add test for the fast api too
+create a dockerfile (Not docker container)
+
+Add the CI/CD flow 
+Add all neccessary credentials in the github secrets
+then flow:
+Step 1 : python and lib setup
+Step 2 : dvc repro
+Step 3 : run model tests
+Step 4 : promote model
+Step 5 : test fastapi app
+Step 6 : 

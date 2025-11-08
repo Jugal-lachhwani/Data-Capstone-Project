@@ -89,3 +89,5 @@ def predict(data: InputData):
         return 'Negative'
     else:
         return "Positive"
+
+
