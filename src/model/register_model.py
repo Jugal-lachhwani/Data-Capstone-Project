@@ -71,6 +71,19 @@ def register_model(model_name: str, model_info: dict):
         
         # Register the model
         model_version = mlflow.register_model(model_uri, model_name)
+        # Also attach the local vectorizer (if present) to the run's artifacts so
+        # the serving app can download it from MLflow later.
+        try:
+            client = mlflow.tracking.MlflowClient()
+            local_vec = os.path.join('models', 'vectorizer.pkl')
+            if os.path.exists(local_vec):
+                # Upload under a known artifact path inside the run (model_artifacts)
+                client.log_artifact(model_info['run_id'], local_vec, artifact_path='model_artifacts')
+                logging.info('Uploaded vectorizer as artifact for run %s', model_info['run_id'])
+            else:
+                logging.warning('Local vectorizer not found at %s; skipping artifact upload', local_vec)
+        except Exception as e:
+            logging.error('Failed to upload vectorizer artifact: %s', e)
         
         # Transition the model to "Staging" stage
         client = mlflow.tracking.MlflowClient()
