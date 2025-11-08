@@ -49,7 +49,7 @@ jobs:
           path: models/*.pkl
           retention-days: 1
       
-      - name: Run Flask app tests
+      - name: Run Fast app tests
         if: success()
         env:
           MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
