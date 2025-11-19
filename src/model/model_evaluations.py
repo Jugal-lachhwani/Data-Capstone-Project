@@ -130,6 +130,7 @@ def main():
             
                         # Log model to MLflow
             mlflow.sklearn.log_model(clf, "model")
+            mlflow.log_artifact("models/vectorizer.pkl", artifact_path="preprocessing")
             # Note: Skipping mlflow.sklearn.log_model() due to DagHub compatibility
             # The model is already saved locally and tracked by DVC
             logging.info("Model artifact saved locally via DVC, skipping MLflow model logging")
@@ -139,6 +140,8 @@ def main():
             
             # Log the metrics file to MLflow
             mlflow.log_artifact('reports/metrics.json')
+            
+            
 
         except Exception as e:
             logging.error('Failed to complete the model evaluation process: %s', e)

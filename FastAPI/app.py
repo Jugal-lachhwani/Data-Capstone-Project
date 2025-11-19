@@ -39,8 +39,15 @@ with open(VECTOR_PATH, "rb") as f:
 
 # Load model from MLflow registry
 model_name = "my_model"
-model_stage = "Staging"
+model_stage = "Production"
 model = mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/{model_stage}")
+
+# vectorizer_path = mlflow.artifacts.download_artifacts(
+#     artifact_uri=f"models:/{model_name}/{model_stage}/preprocessing/vectorizer.pkl"
+# )
+
+# with open(vectorizer_path, "rb") as f:
+#     vectorizer = pickle.load(f)
 
 def preprocess_text(text):
         """Helper function to preprocess a single text string."""
