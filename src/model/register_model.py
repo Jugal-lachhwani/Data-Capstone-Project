@@ -128,7 +128,7 @@ def promote_model_to_production(model_name: str, staging_version: str, metric_na
     logging.info(f"Staging v{latest_staging.version} {metric_name}: {staging_metric}")
     logging.info(f"Production v{latest_prod.version} {metric_name}: {prod_metric}")
 
-    if prod_metric is None or staging_metric >= prod_metric or staging_metric < prod_metric:
+    if prod_metric is None or  staging_metric > prod_metric:
         logging.info(f"Promoting staging model v{latest_staging.version} to Production.")
         client.transition_model_version_stage(
             name=model_name,
